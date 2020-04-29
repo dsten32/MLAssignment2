@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="arpack_combined">
+    <CLASSES>
+      <root url="jar://C:/Program Files/Weka-3-8-4/arpack_combined.jar!/" />
+      <root url="jar://C:/Program Files/Weka-3-8-4/core.jar!/" />
+      <root url="jar://C:/Program Files/Weka-3-8-4/weka.jar!/" />
+      <root url="jar://C:/Program Files/Weka-3-8-4/mtj.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://C:/Program Files/Weka-3-8-4/weka-src.jar!/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
