@@ -6,7 +6,7 @@ import weka.filters.SimpleBatchFilter;
 
 import java.util.Random;
 
-public class Mixup extends SimpleBatchFilter implements Randomizable {
+public class Mixup extends SimpleBatchFilter implements Randomizable, OptionHandler {
     /**
      * The seed for the random number generator.
      */
@@ -28,31 +28,6 @@ public class Mixup extends SimpleBatchFilter implements Randomizable {
     protected double m_lambda;
 
 
-    @Override
-    public void setSeed(int seed) {
-        this.m_seed = seed;
-    }
-
-    @Override
-    public int getSeed() {
-        return m_seed;
-    }
-
-    public int getNumSamples() {
-        return numSamples;
-    }
-
-    public void setNumSamples(int numSamples) {
-        this.numSamples = numSamples;
-    }
-
-    public double getAlpha() {
-        return m_alpha;
-    }
-
-    public void setAlpha(double alpha) {
-        this.m_alpha = alpha;
-    }
 
     @Override
     public String globalInfo() {
@@ -85,12 +60,12 @@ public class Mixup extends SimpleBatchFilter implements Randomizable {
         Random rand = new Random(m_seed);
         BetaDistribution beta = new BetaDistribution(m_alpha, m_alpha);
 
-        m_lambda = beta.inverseCumulativeProbability(Math.random()); // beta distribution via apache commons math3
-
 
         for (int i = 0; i < instances.numInstances(); i++){
+            m_lambda = beta.inverseCumulativeProbability(rand.nextDouble()); // beta distribution via apache commons math3
             // Select the next instance, then randomly select a second instance for mixing
             // should also try randomly selecting both instances.
+            // or randomise instances and then combining consecutive instances
             for(int j = 0; j < numSamples; j++) {
                 Instance firstInputInstance = instances.instance(i);
                 Instance secondInputInstance = instances.instance(rand.nextInt(instances.numInstances()));
@@ -118,5 +93,58 @@ public class Mixup extends SimpleBatchFilter implements Randomizable {
             }
         }
         return output;
+    }
+
+    @OptionMetadata(
+            displayName = "Random Seed",
+            description = "The seed value for the random number generator.",
+            displayOrder = 3,
+            commandLineParamName = "S",
+            commandLineParamSynopsis = "-S")
+    @Override
+    public void setSeed(int seed) {
+        this.m_seed = seed;
+    }
+
+    @Override
+    public int getSeed() {
+        return m_seed;
+    }
+
+    @OptionMetadata(
+            displayName = "Number of Samples",
+            description = "The number of instances to create per instance input.",
+            displayOrder = 4,
+            commandLineParamName = "numSamples",
+            commandLineParamSynopsis = "-numSamples")
+    public int getNumSamples() {
+        return numSamples;
+    }
+
+    public void setNumSamples(int numSamples) {
+        this.numSamples = numSamples;
+    }
+
+    @OptionMetadata(
+            displayName = "alpha",
+            description = "The alpha value used for generating the beta distribution.",
+            displayOrder = 5,
+            commandLineParamName = "alpha",
+            commandLineParamSynopsis = "-alpha")
+    public double getAlpha() {
+        return m_alpha;
+    }
+
+    public void setAlpha(double alpha) {
+        this.m_alpha = alpha;
+    }
+
+    /**
+     * The main method used for running this filter from the command-line interface.
+     *
+     * @param options the command-line options
+     */
+    public static void main(String[] options) {
+        runFilter(new Mixup(), options);
     }
 }
