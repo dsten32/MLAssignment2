@@ -62,12 +62,13 @@ public class Smear extends SimpleBatchFilter implements Randomizable, OptionHand
         double[] attributeGaps = getGaps(instances);
 
         // perturb the values and update output instances collection.
+        if (m_Debug) {
+            System.err.println("Gaps array: " + Arrays.toString(attributeGaps));
+        }
         for(int i=0;i<attributeGaps.length;i++) {
+
             for (int j = 0; j < processedInstances.size(); j++) {
                 gaussian = rand.nextGaussian() * (m_stdDev * attributeGaps[i]);
-                if (m_Debug) {
-                    System.err.println("Gaussian value: " +gaussian);
-                }
                 Instance updatedInstance = processedInstances.instance(j);
                 updatedInstance.setValue(i, updatedInstance.value(i) + gaussian);
                 processedInstances.set(j, updatedInstance);
@@ -117,6 +118,7 @@ public class Smear extends SimpleBatchFilter implements Randomizable, OptionHand
             if(m_Debug) {
                 System.err.println("kth-gap is: " + attributeKthGap);
             }
+            kGaps[i] = attributeKthGap;
     }
         return kGaps;
 }
