@@ -108,12 +108,17 @@ public class Smear extends SimpleBatchFilter implements Randomizable, OptionHand
             if(m_Debug) {
                 System.err.println("differences array: " + Arrays.toString(sortedDifferences.toArray()));
             }
-            // Get kth smallest difference from Set, after turning into array
+            // translate set to array so that indexing of kth gap is possible
             Double[] differencesArray = sortedDifferences.toArray(new Double[0]);
-            if (differencesArray.length >= k_gap) {
-                attributeKthGap = differencesArray[k_gap - 1];
+            // determine the value of kth gap. take the lesser value between
+            // user specified k gap and length of attribute differences array / 2
+            int alternativeK = differencesArray.length > 1 ? differencesArray.length / 2 : 0;
+            k_gap = k_gap < differencesArray.length ? k_gap : alternativeK;
+//          if array length divided by two <= 1 then use 1 as the multiplier, else use k_gap
+            if(alternativeK <= 1){
+                attributeKthGap = 1;
             } else {
-                attributeKthGap = differencesArray[differencesArray.length - 1];
+                attributeKthGap =  differencesArray[k_gap-1];
             }
             if(m_Debug) {
                 System.err.println("kth-gap is: " + attributeKthGap);
